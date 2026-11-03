@@ -150,6 +150,28 @@
     .primary-button:active:not(:disabled) { background: #101114; }
     .primary-button:focus-visible { outline: 3px solid #b7c2d1; outline-offset: 3px; }
     .primary-button:disabled { cursor: progress; background: #a8adb4; }
+    .topup-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 100%;
+      min-height: 46px;
+      margin-top: 10px;
+      padding: 11px 16px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: border-color .2s ease, background-color .2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .topup-button:hover { background: #f7f8f9; border-color: #cfd2d7; }
+    .topup-button:focus-visible { outline: 3px solid #b7c2d1; outline-offset: 3px; }
+    .topup-button span { font-size: 15px; font-weight: 400; color: var(--secondary); }
     .notice { margin: 12px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; text-align: center; }
     .status {
       display: flex;
@@ -240,6 +262,7 @@
           <li><span class="step-index" aria-hidden="true">2</span><span>下载完成后关闭移动数据，避免额外消耗。</span></li>
         </ol>
         <button class="primary-button" id="btn" type="button">开始下载</button>
+        <a id="button_topup" class="topup-button" href="https://www.giffgaff.com/top-up" target="_blank" rel="noopener noreferrer" aria-label="Add credit，前往 giffgaff 官方充值页面">Add credit <span aria-hidden="true">↗</span></a>
         <p class="notice">实际计费及保号状态，以 giffgaff 官方记录为准。</p>
         <div class="status" id="status" role="status" aria-live="polite" aria-atomic="true" hidden>
           <span class="status-indicator" aria-hidden="true"></span>
