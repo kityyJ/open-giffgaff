@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f8f9fa">
+  <meta name="theme-color" content="#f4f5f7">
   <meta name="description" content="简洁的 Giffgaff SIM 流量使用助手，可通过移动网络下载测试数据并保存本地记录。">
   <title>Giffgaff · 保号助手</title>
   <style>
     :root {
       color-scheme: light;
-      --bg: #f8f9fa;
-      --surface: #fff;
-      --text: #202124;
-      --secondary: #686e77;
-      --muted: #9299a3;
-      --line: #e8eaed;
-      --button: #202124;
+      --page: #f4f5f7;
+      --surface: #ffffff;
+      --ink: #17191d;
+      --secondary: #6b7079;
+      --muted: #979ba3;
+      --line: #e9ebef;
+      --radius: 22px;
     }
     * { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
@@ -24,211 +24,225 @@
       min-height: 100vh;
       min-height: 100dvh;
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
+      color: var(--ink);
+      background: var(--page);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       -webkit-font-smoothing: antialiased;
     }
     .app {
       width: 100%;
-      max-width: 930px;
+      max-width: 520px;
       margin: 0 auto;
-      padding: 34px 28px calc(28px + env(safe-area-inset-bottom));
+      padding: max(25px, env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));
     }
-    .topbar, .summary, .history-head, .history-item {
+    .topbar, .card-head, .metric-row, .history-head, .history-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .brand {
+    .topbar { min-height: 38px; gap: 12px; }
+    .brand { display: inline-flex; align-items: center; color: var(--ink); min-width: 0; }
+    .brand svg { display: block; width: 121px; height: auto; flex: none; }
+    .topbar-label {
       display: inline-flex;
       align-items: center;
-      min-width: 0;
-      color: var(--text);
-      text-decoration: none;
-    }
-    .brand svg { display: block; width: 139px; height: auto; overflow: visible; }
-    .topbar-label {
-      padding: 7px 12px;
-      border: 1px solid var(--line);
+      gap: 7px;
+      flex: none;
+      border: 1px solid #e4e6ea;
       border-radius: 99px;
-      background: var(--surface);
-      color: var(--secondary);
-      font-size: 12px;
+      padding: 7px 11px;
+      background: #fff;
+      color: #737780;
+      font-size: 11px;
+      font-weight: 550;
+      letter-spacing: .1px;
       white-space: nowrap;
     }
-    .intro { margin: 34px 0 22px; }
-    h1 {
-      margin: 0;
-      font-size: clamp(27px, 3.4vw, 32px);
-      line-height: 1.3;
-      font-weight: 720;
-      letter-spacing: -.8px;
+    .topbar-label::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #848b95;
     }
-    .intro-desc {
-      margin: 8px 0 0;
-      color: var(--secondary);
-      font-size: 13px;
-      line-height: 1.65;
-    }
-    .dashboard {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
-      align-items: start;
-      gap: 18px;
-    }
-    .panel, .history {
+    .intro { margin: 29px 1px 20px; }
+    h1 { margin: 0; font-size: 27px; line-height: 1.35; letter-spacing: -.7px; font-weight: 740; }
+    .intro-desc { margin: 7px 0 0; color: var(--secondary); font-size: 13px; line-height: 1.6; }
+    .dashboard { display: grid; grid-template-columns: minmax(0, 1fr); gap: 13px; }
+
+    .panel, .guide, .history {
       min-width: 0;
+      border-radius: var(--radius);
+    }
+    .panel, .guide {
       border: 1px solid var(--line);
-      border-radius: 18px;
       background: var(--surface);
+      box-shadow: 0 4px 18px rgba(15, 20, 30, .025);
     }
-    .panel { padding: 26px; }
-    .summary { align-items: flex-end; gap: 10px; }
-    .summary-label {
-      margin: 0 0 7px;
-      color: var(--secondary);
-      font-size: 13px;
+    .panel { padding: 22px; }
+    .card-head { gap: 10px; margin-bottom: 16px; }
+    .card-title { margin: 0; font-size: 14px; font-weight: 680; letter-spacing: -.1px; }
+    .card-tag {
+      flex: none;
+      padding: 5px 9px;
+      background: #f4f5f7;
+      border-radius: 99px;
+      color: #787e87;
+      font-size: 11px;
     }
+    .metric-row { align-items: flex-end; gap: 10px; }
+    .metric-label { margin: 0 0 5px; font-size: 12px; color: var(--secondary); }
     .amount {
       margin: 0;
-      font-size: clamp(38px, 4.2vw, 44px);
-      font-weight: 725;
-      line-height: 1.12;
-      letter-spacing: -1.7px;
+      font-size: clamp(38px, 9vw, 46px);
+      line-height: 1.16;
+      letter-spacing: -2px;
+      font-weight: 750;
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
     }
-    .amount small { font-size: 16px; font-weight: 600; letter-spacing: 0; }
-    .summary-caption { margin-bottom: 5px; color: var(--muted); font-size: 12px; white-space: nowrap; }
-    .steps {
-      display: grid;
-      gap: 11px;
-      margin: 21px 0 0;
-      padding: 19px 0 0;
-      border-top: 1px solid var(--line);
-      list-style: none;
-    }
-    .steps li {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      color: var(--secondary);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-    .step-index {
-      flex: 0 0 20px;
-      display: inline-grid;
-      place-items: center;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #f0f1f3;
-      color: #777d85;
-      font-size: 11px;
-      font-weight: 700;
-    }
-    .primary-button {
-      display: block;
-      width: 100%;
-      min-height: 50px;
-      margin: 22px 0 0;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 11px;
-      background: var(--button);
-      color: white;
-      font: inherit;
-      font-size: 15px;
-      font-weight: 650;
-      cursor: pointer;
-      transition: background-color .2s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .primary-button:hover:not(:disabled) { background: #383b40; }
-    .primary-button:active:not(:disabled) { background: #101114; }
-    .primary-button:focus-visible { outline: 3px solid #b7c2d1; outline-offset: 3px; }
-    .primary-button:disabled { cursor: progress; background: #a8adb4; }
-    .topup-button {
+    .amount small { font-size: 16px; font-weight: 650; letter-spacing: 0; }
+    .metric-note { padding-bottom: 5px; color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .action-group { display: grid; gap: 10px; margin-top: 21px; }
+    .primary-button, .topup-button {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
       width: 100%;
-      min-height: 46px;
-      margin-top: 10px;
-      padding: 11px 16px;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      background: var(--surface);
-      color: var(--text);
+      min-height: 50px;
+      padding: 12px 17px;
+      border-radius: 13px;
+      font: inherit;
       font-size: 14px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: border-color .2s ease, background-color .2s ease;
+      font-weight: 650;
+      line-height: 1.3;
+      cursor: pointer;
       -webkit-tap-highlight-color: transparent;
+      transition: background-color .2s ease, border-color .2s ease;
     }
-    .topup-button:hover { background: #f7f8f9; border-color: #cfd2d7; }
-    .topup-button:focus-visible { outline: 3px solid #b7c2d1; outline-offset: 3px; }
-    .topup-button span { font-size: 15px; font-weight: 400; color: var(--secondary); }
-    .notice { margin: 12px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; text-align: center; }
+    .primary-button { border: 1px solid #17191d; color: #fff; background: #17191d; }
+    .primary-button:hover:not(:disabled) { background: #35373c; }
+    .primary-button:active:not(:disabled) { background: #000; }
+    .primary-button:disabled { cursor: progress; background: #a6a9ae; border-color: #a6a9ae; }
+    .topup-button {
+      gap: 8px;
+      min-height: 46px;
+      border: 1px solid #e5e7eb;
+      background: #f8f9fa;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .topup-button:hover { background: #f1f2f4; border-color: #d7dade; }
+    .topup-button span { color: #858a92; font-size: 16px; font-weight: 400; }
+    .primary-button:focus-visible, .topup-button:focus-visible {
+      outline: 3px solid #abbccd;
+      outline-offset: 3px;
+    }
+    .notice {
+      margin: 13px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.65;
+      text-align: center;
+    }
     .status {
       display: flex;
       align-items: flex-start;
-      gap: 11px;
-      margin-top: 16px;
-      padding: 13px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: #f8f9fa;
+      gap: 10px;
+      margin-top: 15px;
+      padding: 13px 14px;
+      border: 1px solid #e9ebee;
+      border-radius: 13px;
+      background: #f6f7f8;
     }
     .status[hidden] { display: none; }
-    .status-indicator { flex: none; width: 9px; height: 9px; margin-top: 5px; border-radius: 50%; background: #a0a5ab; }
-    .status.success .status-indicator { background: #299673; }
-    .status.error .status-indicator { background: #d45b5b; }
+    .status-indicator { flex: none; width: 8px; height: 8px; margin-top: 5px; border-radius: 50%; background: #9fa4ab; }
+    .status.success .status-indicator { background: #228868; }
+    .status.error .status-indicator { background: #ce4f53; }
     .status.loading .status-indicator { animation: breathe 1s ease-in-out infinite alternate; }
-    .status-title { display: block; font-size: 13px; font-weight: 650; }
-    .status-detail { margin: 4px 0 0; color: var(--secondary); font-size: 12px; line-height: 1.5; }
+    .status-title { display: block; font-size: 13px; font-weight: 660; }
+    .status-detail { margin: 5px 0 0; color: var(--secondary); font-size: 12px; line-height: 1.5; }
     @keyframes breathe { to { opacity: .35; } }
-    @media (prefers-reduced-motion: reduce) {
-      .primary-button { transition: none; }
-      .status.loading .status-indicator { animation: none; }
+
+    .guide { padding: 19px 21px 20px; }
+    .guide-head { display: flex; align-items: center; gap: 9px; margin-bottom: 13px; }
+    .guide-mark { width: 25px; height: 25px; display: inline-grid; place-items: center; border-radius: 9px; background: #f1f2f4; font-size: 14px; color: #666c74; }
+    .guide-title { margin: 0; font-size: 13px; font-weight: 670; }
+    .steps { display: grid; gap: 11px; margin: 0; padding: 0; list-style: none; }
+    .steps li { display: flex; align-items: flex-start; gap: 10px; color: var(--secondary); font-size: 12px; line-height: 1.6; }
+    .step-index {
+      display: inline-grid;
+      flex: 0 0 20px;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 7px;
+      background: #f1f2f4;
+      color: #7b8189;
+      font-size: 11px;
+      font-weight: 650;
     }
 
-    .history { padding: 24px 22px; }
-    .history-head { margin-bottom: 12px; gap: 8px; }
-    h2 { margin: 0; font-size: 15px; font-weight: 670; }
-    .history-count { color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .history {
+      padding: 20px 21px 15px;
+      background: #000000;
+      color: #ffffff;
+      border: 1px solid #000000;
+    }
+    .history-head { gap: 12px; margin-bottom: 10px; }
+    h2 { margin: 0; font-size: 15px; font-weight: 680; letter-spacing: -.1px; color: #fff; }
+    .history-count {
+      flex: none;
+      padding: 5px 9px;
+      border: 1px solid #292929;
+      border-radius: 99px;
+      color: #b8b8b8;
+      font-size: 10px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
     .history-item {
-      min-height: 46px;
+      min-height: 44px;
       gap: 12px;
       padding: 10px 0;
-      border-bottom: 1px solid var(--line);
-      color: var(--secondary);
+      border-bottom: 1px solid #272727;
+      color: #b3b3b3;
       font-size: 12px;
       font-variant-numeric: tabular-nums;
     }
+    .history-item::before {
+      content: "";
+      display: block;
+      flex: none;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #7fe5a1;
+    }
+    .history-item span:first-child { flex: 1; }
     .history-item:last-child { border-bottom: 0; }
-    .history-item span:last-child { color: var(--text); font-weight: 600; white-space: nowrap; }
-    .empty { margin: 0; padding: 10px 0; color: var(--muted); font-size: 12px; }
-    .footer { margin: 24px 0 0; color: var(--muted); font-size: 11px; line-height: 1.65; text-align: center; }
+    .history-item span:last-child { color: #ffffff; font-weight: 660; white-space: nowrap; }
+    .empty { margin: 0; padding: 16px 0 9px; color: #999999; font-size: 12px; }
+    .footer { margin: 20px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; text-align: center; }
 
-    @media (max-width: 720px) {
-      .app { max-width: 480px; padding: 24px 18px calc(22px + env(safe-area-inset-bottom)); }
-      .brand svg { width: 126px; }
-      .intro { margin: 28px 0 18px; }
-      .dashboard { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-      .panel { padding: 21px; }
-      .history { padding: 20px 21px 12px; }
-      .footer { margin-top: 20px; }
+    @media (max-width: 380px) {
+      .app { padding: max(20px, env(safe-area-inset-top)) 14px calc(22px + env(safe-area-inset-bottom)); }
+      .panel, .guide, .history { border-radius: 20px; }
+      .panel { padding: 19px; }
+      .guide, .history { padding-inline: 18px; }
+      .brand svg { width: 112px; }
+      h1 { font-size: 25px; }
+      .amount { font-size: 39px; }
+      .topbar-label { font-size: 10px; padding: 6px 9px; }
     }
-    @media (max-width: 360px) {
-      .app { padding-inline: 14px; }
-      .panel, .history { padding-inline: 17px; }
-      .amount { font-size: 36px; }
-      .topbar-label { font-size: 11px; padding: 6px 9px; }
+    @media (min-width: 720px) {
+      .app { padding-top: 42px; }
     }
+    @media (prefers-reduced-motion: reduce) {
+      .primary-button, .topup-button { transition: none; }
+      .status.loading .status-indicator { animation: none; }
+    }
+
   </style>
 </head>
 <body>
@@ -245,25 +259,27 @@
 
     <section class="intro" aria-labelledby="page-title">
       <h1 id="page-title">保号助手</h1>
-      <p class="intro-desc">使用移动网络下载测试数据，记录仅保存在当前浏览器。</p>
+      <p class="intro-desc">少量数据下载测试，记录只保存在当前浏览器。</p>
     </section>
 
     <div class="dashboard">
-      <section class="panel" aria-label="下载测试数据">
-        <div class="summary">
+      <section class="panel" aria-labelledby="task-title">
+        <div class="card-head">
+          <h2 class="card-title" id="task-title">流量下载</h2>
+          <span class="card-tag">单次任务</span>
+        </div>
+        <div class="metric-row">
           <div>
-            <p class="summary-label">单次预计下载</p>
+            <p class="metric-label">预计下载量</p>
             <p class="amount">约 126 <small>KB</small></p>
           </div>
-          <span class="summary-caption">一次请求</span>
+          <span class="metric-note">1 次请求</span>
         </div>
-        <ol class="steps">
-          <li><span class="step-index" aria-hidden="true">1</span><span>关闭 Wi-Fi，确认使用 giffgaff 移动数据。</span></li>
-          <li><span class="step-index" aria-hidden="true">2</span><span>下载完成后关闭移动数据，避免额外消耗。</span></li>
-        </ol>
-        <button class="primary-button" id="btn" type="button">开始下载</button>
-        <a id="button_topup" class="topup-button" href="https://www.giffgaff.com/top-up" target="_blank" rel="noopener noreferrer" aria-label="Add credit，前往 giffgaff 官方充值页面">Add credit <span aria-hidden="true">↗</span></a>
-        <p class="notice">实际计费及保号状态，以 giffgaff 官方记录为准。</p>
+        <div class="action-group">
+          <button class="primary-button" id="btn" type="button">开始下载</button>
+          <a id="button_topup" class="topup-button" href="https://www.giffgaff.com/top-up" target="_blank" rel="noopener noreferrer" aria-label="Add credit，前往 giffgaff 官方充值页面">Add credit <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="notice">实际计费与保号状态请以 giffgaff 官方记录为准</p>
         <div class="status" id="status" role="status" aria-live="polite" aria-atomic="true" hidden>
           <span class="status-indicator" aria-hidden="true"></span>
           <div>
@@ -273,10 +289,21 @@
         </div>
       </section>
 
+      <section class="guide" aria-labelledby="guide-title">
+        <div class="guide-head">
+          <span class="guide-mark" aria-hidden="true">i</span>
+          <h2 class="guide-title" id="guide-title">使用提示</h2>
+        </div>
+        <ol class="steps">
+          <li><span class="step-index" aria-hidden="true">1</span><span>关闭 Wi-Fi，确认使用 giffgaff 移动数据。</span></li>
+          <li><span class="step-index" aria-hidden="true">2</span><span>下载完成后关闭移动数据，避免额外消耗。</span></li>
+        </ol>
+      </section>
+
       <section class="history" aria-labelledby="history-title">
         <div class="history-head">
-          <h2 id="history-title">最近使用</h2>
-          <span class="history-count">最近 5 条</span>
+          <h2 id="history-title">操作日志</h2>
+          <span class="history-count">本地 · 最近 5 条</span>
         </div>
         <div id="historyList"></div>
       </section>
