@@ -1,267 +1,382 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giffgaff 保号助手</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .container { 
-            background: white;
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 400px;
-            width: 100%;
-        }
-        h1 { 
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .subtitle {
-            color: #666;
-            font-size: 14px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .info-box {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #555;
-        }
-        .info-box strong {
-            color: #333;
-            display: block;
-            margin-bottom: 5px;
-        }
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 18px 30px;
-            font-size: 18px;
-            font-weight: 600;
-            border-radius: 12px;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-        button:active {
-            transform: translateY(0);
-        }
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        #status {
-            margin-top: 25px;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 600;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        #status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 2px solid #c3e6cb;
-        }
-        #status.loading {
-            background: #fff3cd;
-            color: #856404;
-            border: 2px solid #ffeaa7;
-        }
-        #status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 2px solid #f5c6cb;
-        }
-        .stats {
-            font-size: 13px;
-            margin-top: 8px;
-            opacity: 0.9;
-        }
-        .warning {
-            font-size: 12px;
-            color: #dc3545;
-            margin-top: 25px;
-            padding: 12px;
-            background: #fff5f5;
-            border-radius: 8px;
-            border-left: 4px solid #dc3545;
-            line-height: 1.6;
-        }
-        .warning strong {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .history {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-        .history-title {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        .history-item {
-            font-size: 12px;
-            color: #888;
-            padding: 5px 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fafafa">
+  <meta name="description" content="简洁的 Giffgaff SIM 流量使用助手，可通过移动网络下载测试数据并保存本地记录。">
+  <title>Giffgaff · 保号助手</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --text: #202124;
+      --secondary: #6f737a;
+      --muted: #92969d;
+      --line: #e9eaec;
+      --button: #202124;
+    }
+
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 32px 22px calc(28px + env(safe-area-inset-bottom));
+    }
+
+    .topbar, .brand, .summary, .history-head, .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand { justify-content: flex-start; gap: 10px; }
+    .brand-icon {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--text);
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+    .brand-name { font-size: 16px; font-weight: 700; letter-spacing: -.4px; }
+    .topbar-label {
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 100px;
+      color: var(--secondary);
+      background: var(--surface);
+      font-size: 12px;
+    }
+
+    .intro { margin: 38px 0 22px; }
+    .eyebrow {
+      margin: 0 0 9px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font-size: 31px;
+      font-weight: 750;
+      line-height: 1.25;
+      letter-spacing: -1.1px;
+    }
+    .intro-desc {
+      margin: 10px 0 0;
+      font-size: 13px;
+      line-height: 1.75;
+      color: var(--secondary);
+    }
+
+    .panel {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+    }
+    .summary { align-items: flex-end; gap: 12px; }
+    .summary-label {
+      margin: 0 0 6px;
+      color: var(--secondary);
+      font-size: 13px;
+    }
+    .amount {
+      margin: 0;
+      font-size: 40px;
+      font-weight: 720;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -1.6px;
+    }
+    .amount small {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+    .summary-caption {
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .separator {
+      height: 1px;
+      margin: 22px 0 18px;
+      background: var(--line);
+    }
+    .steps { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+    .steps li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--secondary);
+      line-height: 1.55;
+    }
+    .step-index {
+      display: inline-grid;
+      flex: none;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #f0f1f2;
+      color: #62666e;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .primary-button {
+      display: block;
+      width: 100%;
+      min-height: 52px;
+      margin: 24px 0 0;
+      padding: 13px 18px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--button);
+      color: #fff;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: background-color .2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .primary-button:hover:not(:disabled) { background: #383a3e; }
+    .primary-button:active:not(:disabled) { background: #121315; }
+    .primary-button:focus-visible { outline: 3px solid #b8c1d2; outline-offset: 3px; }
+    .primary-button:disabled { cursor: progress; background: #a8abb0; }
+    .notice {
+      margin: 13px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.7;
+      text-align: center;
+    }
+    .status {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      margin-top: 18px;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #f8f9fa;
+    }
+    .status[hidden] { display: none; }
+    .status-indicator {
+      width: 9px;
+      height: 9px;
+      flex: none;
+      margin-top: 5px;
+      border-radius: 50%;
+      background: #9ba0a6;
+    }
+    .status.success .status-indicator { background: #279a74; }
+    .status.error .status-indicator { background: #d45b5b; }
+    .status.loading .status-indicator { animation: breathe 1s ease-in-out infinite alternate; }
+    .status-title { display: block; font-size: 13px; font-weight: 650; }
+    .status-detail { margin: 4px 0 0; color: var(--secondary); font-size: 12px; line-height: 1.5; }
+    @keyframes breathe { to { opacity: .35; } }
+    @media (prefers-reduced-motion: reduce) {
+      .primary-button { transition: none; }
+      .status.loading .status-indicator { animation: none; }
+    }
+
+    .history { margin-top: 29px; }
+    .history-head { margin-bottom: 10px; }
+    h2 { margin: 0; font-size: 15px; font-weight: 650; }
+    .history-count { color: var(--muted); font-size: 11px; }
+    .history-item {
+      min-height: 42px;
+      padding: 9px 1px;
+      border-bottom: 1px solid var(--line);
+      color: var(--secondary);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+    .history-item span:last-child { color: var(--text); font-weight: 550; }
+    .empty { margin: 0; padding: 14px 1px; color: var(--muted); font-size: 12px; }
+    .footer { margin: 23px 0 0; color: var(--muted); font-size: 11px; line-height: 1.7; text-align: center; }
+
+    @media (max-width: 420px) {
+      .app { padding: 26px 18px calc(22px + env(safe-area-inset-bottom)); }
+      .intro { margin-top: 32px; }
+      .panel { padding: 21px; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🇬🇧 Giffgaff 保号</h1>
-        <div class="subtitle">极简流量消耗工具</div>
-        
-        <div class="info-box">
-            <strong>本次将消耗：</strong>
-            约 120 KB 数据流量<br>
-            预计费用：2-3 便士 (£0.02-0.03)
+  <main class="app">
+    <header class="topbar">
+      <div class="brand" aria-label="Giffgaff">
+        <span class="brand-icon" aria-hidden="true">g</span>
+        <span class="brand-name">giffgaff</span>
+      </div>
+      <span class="topbar-label">SIM 流量助手</span>
+    </header>
+
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">Mobile Data</p>
+      <h1 id="page-title">保号助手</h1>
+      <p class="intro-desc">通过移动网络下载少量测试数据，操作简单，记录仅保存在当前浏览器。</p>
+    </section>
+
+    <section class="panel" aria-label="下载测试数据">
+      <div class="summary">
+        <div>
+          <p class="summary-label">单次预计下载</p>
+          <p class="amount">约 126 <small>KB</small></p>
         </div>
-        
-        <button id="btn" onclick="consumeData()">
-            🚀 开始保号
-        </button>
-        
-        <div id="status"></div>
-        
-        <div class="history">
-            <div class="history-title">使用记录</div>
-            <div id="historyList"></div>
+        <span class="summary-caption">一次请求</span>
+      </div>
+      <div class="separator"></div>
+      <ol class="steps">
+        <li><span class="step-index" aria-hidden="true">1</span><span>关闭 Wi-Fi，确认正在使用 Giffgaff 移动数据。</span></li>
+        <li><span class="step-index" aria-hidden="true">2</span><span>下载完成后关闭移动数据，避免额外消耗。</span></li>
+      </ol>
+      <button class="primary-button" id="btn" type="button">开始下载</button>
+      <p class="notice">实际计费及保号状态，以 Giffgaff 官方记录为准。</p>
+      <div class="status" id="status" role="status" aria-live="polite" aria-atomic="true" hidden>
+        <span class="status-indicator" aria-hidden="true"></span>
+        <div>
+          <strong class="status-title" id="statusTitle"></strong>
+          <p class="status-detail" id="statusDetail"></p>
         </div>
-        
-        <div class="warning">
-            <strong>⚠️ 使用前必读：</strong>
-            1. 关闭 Wi-Fi，确保使用移动数据<br>
-            2. 禁止其他应用联网权限<br>
-            3. 仅允许浏览器使用移动数据<br>
-            4. 完成后立即关闭移动数据
-        </div>
-    </div>
+      </div>
+    </section>
 
-    <script>
-        // 加载历史记录
-        function loadHistory() {
-            const history = JSON.parse(localStorage.getItem('ggHistory') || '[]');
-            const historyList = document.getElementById('historyList');
-            
-            if (history.length === 0) {
-                historyList.innerHTML = '<div class="history-item">暂无记录</div>';
-                return;
-            }
-            
-            historyList.innerHTML = history.slice(-5).reverse().map(item => 
-                `<div class="history-item">✓ ${item.date} - ${item.size} KB</div>`
-            ).join('');
-        }
-        
-        // 保存历史记录
-        function saveHistory(size) {
-            const history = JSON.parse(localStorage.getItem('ggHistory') || '[]');
-            const now = new Date();
-            const dateStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-            
-            history.push({
-                date: dateStr,
-                size: size,
-                timestamp: now.getTime()
-            });
-            
-            // 只保留最近20条记录
-            if (history.length > 20) {
-                history.shift();
-            }
-            
-            localStorage.setItem('ggHistory', JSON.stringify(history));
-            loadHistory();
-        }
-        
-        function consumeData() {
-            const btn = document.getElementById('btn');
-            const status = document.getElementById('status');
-            
-            btn.disabled = true;
-            status.className = 'loading';
-            status.innerHTML = "📡 正在连接服务器...<br><div class='stats'>请保持网络连接</div>";
+    <section class="history" aria-labelledby="history-title">
+      <div class="history-head">
+        <h2 id="history-title">最近使用</h2>
+        <span class="history-count">最近 5 条</span>
+      </div>
+      <div id="historyList"></div>
+    </section>
+    <p class="footer">无需登录 · 本地保存记录 · 不收集个人信息</p>
+  </main>
 
-            // 防缓存：添加时间戳
-            const timestamp = new Date().getTime();
-            const randomStr = Math.random().toString(36).substring(7);
-            const fileUrl = `payload.txt?t=${timestamp}&r=${randomStr}`; 
+  <script>
+    const historyKey = "ggHistory";
+    const button = document.getElementById("btn");
+    const statusBox = document.getElementById("status");
+    const statusTitle = document.getElementById("statusTitle");
+    const statusDetail = document.getElementById("statusDetail");
+    const historyList = document.getElementById("historyList");
 
-            const startTime = new Date().getTime();
+    function readHistory() {
+      try {
+        const records = JSON.parse(localStorage.getItem(historyKey) || "[]");
+        return Array.isArray(records) ? records : [];
+      } catch (_) {
+        return [];
+      }
+    }
 
-            fetch(fileUrl, {
-                cache: 'no-store',  // 强制不使用缓存
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache'
-                }
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('网络请求失败');
-                    return response.blob();
-                })
-                .then(blob => {
-                    const sizeInKB = (blob.size / 1024).toFixed(2);
-                    const duration = ((new Date().getTime() - startTime) / 1000).toFixed(2);
-                    
-                    status.className = 'success';
-                    status.innerHTML = `
-                        ✅ 保号成功！
-                        <div class='stats'>
-                            已消耗：${sizeInKB} KB<br>
-                            耗时：${duration} 秒
-                        </div>
-                    `;
-                    
-                    // 保存记录
-                    saveHistory(sizeInKB);
-                    
-                    btn.disabled = false;
-                    btn.innerText = "🔄 再次保号";
-                })
-                .catch(error => {
-                    status.className = 'error';
-                    status.innerHTML = `
-                        ❌ 操作失败
-                        <div class='stats'>${error.message}</div>
-                    `;
-                    btn.disabled = false;
-                });
-        }
-        
-        // 页面加载时显示历史记录
-        window.onload = loadHistory;
-    </script>
+    function loadHistory() {
+      historyList.replaceChildren();
+      const records = readHistory().slice(-5).reverse();
+
+      if (!records.length) {
+        const empty = document.createElement("p");
+        empty.className = "empty";
+        empty.textContent = "暂无记录";
+        historyList.appendChild(empty);
+        return;
+      }
+
+      records.forEach(function (item) {
+        const row = document.createElement("div");
+        row.className = "history-item";
+        const date = document.createElement("span");
+        const size = document.createElement("span");
+        date.textContent = String(item.date || "未知时间");
+        size.textContent = String(item.size || "0") + " KB";
+        row.append(date, size);
+        historyList.appendChild(row);
+      });
+    }
+
+    function saveHistory(size) {
+      const now = new Date();
+      const date = (now.getMonth() + 1) + "/" + now.getDate() + " " +
+        now.getHours() + ":" + String(now.getMinutes()).padStart(2, "0");
+      const records = readHistory();
+      records.push({ date: date, size: size, timestamp: now.getTime() });
+
+      try {
+        localStorage.setItem(historyKey, JSON.stringify(records.slice(-20)));
+      } catch (_) {
+        // 浏览器禁止本地存储时，不影响下载本身。
+      }
+      loadHistory();
+    }
+
+    function showStatus(type, title, detail) {
+      statusBox.hidden = false;
+      statusBox.className = "status " + type;
+      statusTitle.textContent = title;
+      statusDetail.textContent = detail;
+    }
+
+    async function consumeData() {
+      button.disabled = true;
+      button.textContent = "正在下载…";
+      showStatus("loading", "正在连接", "请保持移动网络连接");
+
+      const url = new URL("payload.txt", window.location.href);
+      url.searchParams.set("t", String(Date.now()));
+      url.searchParams.set("r", Math.random().toString(36).slice(2));
+      const startedAt = performance.now();
+
+      try {
+        const response = await fetch(url.toString(), {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache"
+          }
+        });
+        if (!response.ok) throw new Error("服务器返回 HTTP " + response.status);
+        const blob = await response.blob();
+        if (blob.size === 0) throw new Error("服务器返回空文件");
+
+        const size = (blob.size / 1024).toFixed(2);
+        const seconds = ((performance.now() - startedAt) / 1000).toFixed(2);
+        showStatus("success", "下载完成", "收到 " + size + " KB · 用时 " + seconds + " 秒");
+        saveHistory(size);
+        button.textContent = "再次下载";
+      } catch (error) {
+        showStatus("error", "下载失败", error.message || "请检查网络后重试");
+        button.textContent = "重试下载";
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    button.addEventListener("click", consumeData);
+    loadHistory();
+  </script>
 </body>
 </html>
