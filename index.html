@@ -3,21 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#fafafa">
+  <meta name="theme-color" content="#f8f9fa">
   <meta name="description" content="简洁的 Giffgaff SIM 流量使用助手，可通过移动网络下载测试数据并保存本地记录。">
   <title>Giffgaff · 保号助手</title>
   <style>
     :root {
       color-scheme: light;
-      --bg: #fafafa;
-      --surface: #ffffff;
+      --bg: #f8f9fa;
+      --surface: #fff;
       --text: #202124;
-      --secondary: #6f737a;
-      --muted: #92969d;
-      --line: #e9eaec;
+      --secondary: #686e77;
+      --muted: #9299a3;
+      --line: #e8eaed;
       --button: #202124;
     }
-
     * { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
     body {
@@ -30,132 +29,116 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       -webkit-font-smoothing: antialiased;
     }
-
     .app {
       width: 100%;
-      max-width: 480px;
+      max-width: 930px;
       margin: 0 auto;
-      padding: 32px 22px calc(28px + env(safe-area-inset-bottom));
+      padding: 34px 28px calc(28px + env(safe-area-inset-bottom));
     }
-
-    .topbar, .brand, .summary, .history-head, .history-item {
+    .topbar, .summary, .history-head, .history-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .brand { justify-content: flex-start; gap: 10px; }
-    .brand-icon {
-      display: grid;
-      place-items: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: var(--text);
-      color: white;
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -1px;
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      min-width: 0;
+      color: var(--text);
+      text-decoration: none;
     }
-    .brand-name { font-size: 16px; font-weight: 700; letter-spacing: -.4px; }
+    .brand svg { display: block; width: 139px; height: auto; overflow: visible; }
     .topbar-label {
-      padding: 6px 10px;
+      padding: 7px 12px;
       border: 1px solid var(--line);
-      border-radius: 100px;
-      color: var(--secondary);
+      border-radius: 99px;
       background: var(--surface);
+      color: var(--secondary);
       font-size: 12px;
+      white-space: nowrap;
     }
-
-    .intro { margin: 38px 0 22px; }
-    .eyebrow {
-      margin: 0 0 9px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-    }
+    .intro { margin: 34px 0 22px; }
     h1 {
       margin: 0;
-      font-size: 31px;
-      font-weight: 750;
-      line-height: 1.25;
-      letter-spacing: -1.1px;
+      font-size: clamp(27px, 3.4vw, 32px);
+      line-height: 1.3;
+      font-weight: 720;
+      letter-spacing: -.8px;
     }
     .intro-desc {
-      margin: 10px 0 0;
-      font-size: 13px;
-      line-height: 1.75;
+      margin: 8px 0 0;
       color: var(--secondary);
+      font-size: 13px;
+      line-height: 1.65;
     }
-
-    .panel {
-      padding: 24px;
+    .dashboard {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
+      align-items: start;
+      gap: 18px;
+    }
+    .panel, .history {
+      min-width: 0;
       border: 1px solid var(--line);
-      border-radius: 20px;
+      border-radius: 18px;
       background: var(--surface);
     }
-    .summary { align-items: flex-end; gap: 12px; }
+    .panel { padding: 26px; }
+    .summary { align-items: flex-end; gap: 10px; }
     .summary-label {
-      margin: 0 0 6px;
+      margin: 0 0 7px;
       color: var(--secondary);
       font-size: 13px;
     }
     .amount {
       margin: 0;
-      font-size: 40px;
-      font-weight: 720;
-      line-height: 1.1;
+      font-size: clamp(38px, 4.2vw, 44px);
+      font-weight: 725;
+      line-height: 1.12;
+      letter-spacing: -1.7px;
       font-variant-numeric: tabular-nums;
-      letter-spacing: -1.6px;
-    }
-    .amount small {
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 0;
-    }
-    .summary-caption {
-      margin-bottom: 4px;
-      color: var(--muted);
-      font-size: 12px;
       white-space: nowrap;
     }
-    .separator {
-      height: 1px;
-      margin: 22px 0 18px;
-      background: var(--line);
+    .amount small { font-size: 16px; font-weight: 600; letter-spacing: 0; }
+    .summary-caption { margin-bottom: 5px; color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .steps {
+      display: grid;
+      gap: 11px;
+      margin: 21px 0 0;
+      padding: 19px 0 0;
+      border-top: 1px solid var(--line);
+      list-style: none;
     }
-    .steps { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
     .steps li {
       display: flex;
       align-items: flex-start;
       gap: 10px;
-      font-size: 13px;
       color: var(--secondary);
-      line-height: 1.55;
+      font-size: 13px;
+      line-height: 1.6;
     }
     .step-index {
+      flex: 0 0 20px;
       display: inline-grid;
-      flex: none;
       place-items: center;
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background: #f0f1f2;
-      color: #62666e;
+      background: #f0f1f3;
+      color: #777d85;
       font-size: 11px;
       font-weight: 700;
     }
     .primary-button {
       display: block;
       width: 100%;
-      min-height: 52px;
-      margin: 24px 0 0;
-      padding: 13px 18px;
-      border: 0;
-      border-radius: 12px;
+      min-height: 50px;
+      margin: 22px 0 0;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 11px;
       background: var(--button);
-      color: #fff;
+      color: white;
       font: inherit;
       font-size: 15px;
       font-weight: 650;
@@ -163,37 +146,24 @@
       transition: background-color .2s ease;
       -webkit-tap-highlight-color: transparent;
     }
-    .primary-button:hover:not(:disabled) { background: #383a3e; }
-    .primary-button:active:not(:disabled) { background: #121315; }
-    .primary-button:focus-visible { outline: 3px solid #b8c1d2; outline-offset: 3px; }
-    .primary-button:disabled { cursor: progress; background: #a8abb0; }
-    .notice {
-      margin: 13px 0 0;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.7;
-      text-align: center;
-    }
+    .primary-button:hover:not(:disabled) { background: #383b40; }
+    .primary-button:active:not(:disabled) { background: #101114; }
+    .primary-button:focus-visible { outline: 3px solid #b7c2d1; outline-offset: 3px; }
+    .primary-button:disabled { cursor: progress; background: #a8adb4; }
+    .notice { margin: 12px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; text-align: center; }
     .status {
       display: flex;
       align-items: flex-start;
       gap: 11px;
-      margin-top: 18px;
-      padding: 13px 14px;
+      margin-top: 16px;
+      padding: 13px;
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 10px;
       background: #f8f9fa;
     }
     .status[hidden] { display: none; }
-    .status-indicator {
-      width: 9px;
-      height: 9px;
-      flex: none;
-      margin-top: 5px;
-      border-radius: 50%;
-      background: #9ba0a6;
-    }
-    .status.success .status-indicator { background: #279a74; }
+    .status-indicator { flex: none; width: 9px; height: 9px; margin-top: 5px; border-radius: 50%; background: #a0a5ab; }
+    .status.success .status-indicator { background: #299673; }
     .status.error .status-indicator { background: #d45b5b; }
     .status.loading .status-indicator { animation: breathe 1s ease-in-out infinite alternate; }
     .status-title { display: block; font-size: 13px; font-weight: 650; }
@@ -204,79 +174,92 @@
       .status.loading .status-indicator { animation: none; }
     }
 
-    .history { margin-top: 29px; }
-    .history-head { margin-bottom: 10px; }
-    h2 { margin: 0; font-size: 15px; font-weight: 650; }
-    .history-count { color: var(--muted); font-size: 11px; }
+    .history { padding: 24px 22px; }
+    .history-head { margin-bottom: 12px; gap: 8px; }
+    h2 { margin: 0; font-size: 15px; font-weight: 670; }
+    .history-count { color: var(--muted); font-size: 11px; white-space: nowrap; }
     .history-item {
-      min-height: 42px;
-      padding: 9px 1px;
+      min-height: 46px;
+      gap: 12px;
+      padding: 10px 0;
       border-bottom: 1px solid var(--line);
       color: var(--secondary);
       font-size: 12px;
       font-variant-numeric: tabular-nums;
     }
-    .history-item span:last-child { color: var(--text); font-weight: 550; }
-    .empty { margin: 0; padding: 14px 1px; color: var(--muted); font-size: 12px; }
-    .footer { margin: 23px 0 0; color: var(--muted); font-size: 11px; line-height: 1.7; text-align: center; }
+    .history-item:last-child { border-bottom: 0; }
+    .history-item span:last-child { color: var(--text); font-weight: 600; white-space: nowrap; }
+    .empty { margin: 0; padding: 10px 0; color: var(--muted); font-size: 12px; }
+    .footer { margin: 24px 0 0; color: var(--muted); font-size: 11px; line-height: 1.65; text-align: center; }
 
-    @media (max-width: 420px) {
-      .app { padding: 26px 18px calc(22px + env(safe-area-inset-bottom)); }
-      .intro { margin-top: 32px; }
+    @media (max-width: 720px) {
+      .app { max-width: 480px; padding: 24px 18px calc(22px + env(safe-area-inset-bottom)); }
+      .brand svg { width: 126px; }
+      .intro { margin: 28px 0 18px; }
+      .dashboard { grid-template-columns: minmax(0, 1fr); gap: 16px; }
       .panel { padding: 21px; }
+      .history { padding: 20px 21px 12px; }
+      .footer { margin-top: 20px; }
+    }
+    @media (max-width: 360px) {
+      .app { padding-inline: 14px; }
+      .panel, .history { padding-inline: 17px; }
+      .amount { font-size: 36px; }
+      .topbar-label { font-size: 11px; padding: 6px 9px; }
     }
   </style>
 </head>
 <body>
   <main class="app">
     <header class="topbar">
-      <div class="brand" aria-label="Giffgaff">
-        <span class="brand-icon" aria-hidden="true">g</span>
-        <span class="brand-name">giffgaff</span>
+      <div class="brand">
+        <svg viewBox="0 0 100 32" role="img" aria-labelledby="giffgaff-title" xmlns="http://www.w3.org/2000/svg">
+          <title id="giffgaff-title">giffgaff</title>
+          <path d="M79.4055 24.2453H84.6767V13.6416H89.2737V24.2453H94.5449V13.6416H97.6402L100 11.2818L97.6402 8.92201H94.5449V8.21713C94.5449 7.02191 95.2191 6.43963 96.2918 6.43963C97.0273 6.43963 97.487 6.62351 98.0386 7.05256V2.39427C97.3644 2.0878 96.5676 1.93457 95.4643 1.93457C91.3577 1.93457 89.2737 4.29436 89.2737 8.67683V8.92201H84.6767V8.21713C84.6767 7.02191 85.3509 6.43963 86.4235 6.43963C87.1591 6.43963 87.6188 6.62351 88.1704 7.05256V2.39427C87.4962 2.0878 86.6994 1.93457 85.5961 1.93457C81.4894 1.93457 79.4055 4.29436 79.4055 8.67683V24.2453ZM7.41649 31.2328C12.9022 31.2328 16.7944 28.5665 16.7944 22.9582V8.92201H11.5231V10.4237C10.5731 9.22847 9.1327 8.49295 7.17131 8.49295C2.81949 8.49295 0 11.7415 0 16.5837C0 21.3952 2.81949 24.6744 7.17131 24.6744C9.1327 24.6744 10.5731 24.0002 11.5231 22.7743V23.0808C11.5231 25.6857 9.46981 26.4519 7.17131 26.4519C4.96476 26.4519 3.34048 25.839 1.93074 24.9196V30.0375C3.40178 30.7731 5.4551 31.2328 7.41649 31.2328ZM8.55041 19.9854C6.52774 19.9854 5.33252 18.3918 5.33252 16.5837C5.33252 14.8062 6.52774 13.1819 8.55041 13.1819C10.5731 13.1819 11.7683 14.8062 11.7683 16.5837C11.7683 18.3918 10.5731 19.9854 8.55041 19.9854ZM18.0815 24.2453H23.3834V8.92201H18.0815V24.2453ZM20.7478 7.81873C22.3414 7.81873 23.6899 6.50092 23.6899 4.90729C23.6899 3.28302 22.3414 1.93457 20.7478 1.93457C19.1542 1.93457 17.7751 3.28302 17.7751 4.90729C17.7751 6.50092 19.1542 7.81873 20.7478 7.81873ZM24.6705 24.2453H29.9418V13.6416H34.5388V24.2453H39.81V13.6416H43.3037V8.92201H39.81V8.21713C39.81 7.02191 40.4842 6.43963 41.5569 6.43963C42.2924 6.43963 42.7521 6.62351 43.3037 7.05256V2.39427C42.6295 2.0878 41.8327 1.93457 40.7294 1.93457C36.6227 1.93457 34.5388 4.29436 34.5388 8.67683V8.92201H29.9418V8.21713C29.9418 7.02191 30.616 6.43963 31.6886 6.43963C32.4241 6.43963 32.8839 6.62351 33.4355 7.05256V2.39427C32.7613 2.0878 31.9645 1.93457 30.8612 1.93457C26.7545 1.93457 24.6705 4.29436 24.6705 8.67683V24.2453ZM50.9654 31.2328C56.4511 31.2328 60.3432 28.5665 60.3432 22.9582V8.92201H55.072V10.4237C54.122 9.22847 52.6816 8.49295 50.7202 8.49295C46.3684 8.49295 43.5489 11.7415 43.5489 16.5837C43.5489 21.3952 46.3684 24.6744 50.7202 24.6744C52.6816 24.6744 54.122 24.0002 55.072 22.7743V23.0808C55.072 25.6857 53.0187 26.4519 50.7202 26.4519C48.5136 26.4519 46.8894 25.839 45.4796 24.9196V30.0375C46.9507 30.7731 49.004 31.2328 50.9654 31.2328ZM52.0993 19.9854C50.0766 19.9854 48.8814 18.3918 48.8814 16.5837C48.8814 14.8062 50.0766 13.1819 52.0993 13.1819C54.122 13.1819 55.3172 14.8062 55.3172 16.5837C55.3172 18.3918 54.122 19.9854 52.0993 19.9854ZM68.4952 24.6744C70.4566 24.6744 71.897 24.0002 72.8471 22.7743V24.2453H78.1183V8.92201H72.8471V10.4237C71.897 9.22847 70.4566 8.49295 68.4952 8.49295C64.1434 8.49295 61.3239 11.7415 61.3239 16.5837C61.3239 21.3952 64.1434 24.6744 68.4952 24.6744ZM69.8744 19.9854C67.8517 19.9854 66.6564 18.3918 66.6564 16.5837C66.6564 14.8062 67.8517 13.1819 69.8744 13.1819C71.897 13.1819 73.0922 14.8062 73.0922 16.5837C73.0922 18.3918 71.897 19.9854 69.8744 19.9854Z" fill="currentColor"></path>
+        </svg>
       </div>
       <span class="topbar-label">SIM 流量助手</span>
     </header>
 
     <section class="intro" aria-labelledby="page-title">
-      <p class="eyebrow">Mobile Data</p>
       <h1 id="page-title">保号助手</h1>
-      <p class="intro-desc">通过移动网络下载少量测试数据，操作简单，记录仅保存在当前浏览器。</p>
+      <p class="intro-desc">使用移动网络下载测试数据，记录仅保存在当前浏览器。</p>
     </section>
 
-    <section class="panel" aria-label="下载测试数据">
-      <div class="summary">
-        <div>
-          <p class="summary-label">单次预计下载</p>
-          <p class="amount">约 126 <small>KB</small></p>
+    <div class="dashboard">
+      <section class="panel" aria-label="下载测试数据">
+        <div class="summary">
+          <div>
+            <p class="summary-label">单次预计下载</p>
+            <p class="amount">约 126 <small>KB</small></p>
+          </div>
+          <span class="summary-caption">一次请求</span>
         </div>
-        <span class="summary-caption">一次请求</span>
-      </div>
-      <div class="separator"></div>
-      <ol class="steps">
-        <li><span class="step-index" aria-hidden="true">1</span><span>关闭 Wi-Fi，确认正在使用 Giffgaff 移动数据。</span></li>
-        <li><span class="step-index" aria-hidden="true">2</span><span>下载完成后关闭移动数据，避免额外消耗。</span></li>
-      </ol>
-      <button class="primary-button" id="btn" type="button">开始下载</button>
-      <p class="notice">实际计费及保号状态，以 Giffgaff 官方记录为准。</p>
-      <div class="status" id="status" role="status" aria-live="polite" aria-atomic="true" hidden>
-        <span class="status-indicator" aria-hidden="true"></span>
-        <div>
-          <strong class="status-title" id="statusTitle"></strong>
-          <p class="status-detail" id="statusDetail"></p>
+        <ol class="steps">
+          <li><span class="step-index" aria-hidden="true">1</span><span>关闭 Wi-Fi，确认使用 giffgaff 移动数据。</span></li>
+          <li><span class="step-index" aria-hidden="true">2</span><span>下载完成后关闭移动数据，避免额外消耗。</span></li>
+        </ol>
+        <button class="primary-button" id="btn" type="button">开始下载</button>
+        <p class="notice">实际计费及保号状态，以 giffgaff 官方记录为准。</p>
+        <div class="status" id="status" role="status" aria-live="polite" aria-atomic="true" hidden>
+          <span class="status-indicator" aria-hidden="true"></span>
+          <div>
+            <strong class="status-title" id="statusTitle"></strong>
+            <p class="status-detail" id="statusDetail"></p>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="history" aria-labelledby="history-title">
-      <div class="history-head">
-        <h2 id="history-title">最近使用</h2>
-        <span class="history-count">最近 5 条</span>
-      </div>
-      <div id="historyList"></div>
-    </section>
+      <section class="history" aria-labelledby="history-title">
+        <div class="history-head">
+          <h2 id="history-title">最近使用</h2>
+          <span class="history-count">最近 5 条</span>
+        </div>
+        <div id="historyList"></div>
+      </section>
+    </div>
     <p class="footer">无需登录 · 本地保存记录 · 不收集个人信息</p>
   </main>
-
   <script>
     const historyKey = "ggHistory";
     const button = document.getElementById("btn");
