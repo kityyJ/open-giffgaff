@@ -7,6 +7,14 @@
   <meta name="description" content="简洁的 Giffgaff SIM 流量使用助手，可通过移动网络下载测试数据并保存本地记录。">
   <title>Giffgaff · 保号助手</title>
   <style>
+    @font-face {
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url("fonts/poppins-700-latin.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
     :root {
       color-scheme: light;
       --page: #f4f5f7;
@@ -104,14 +112,17 @@
     .amount small { font-size: 16px; font-weight: 650; letter-spacing: 0; }
     .metric-note { padding-bottom: 5px; color: var(--muted); font-size: 12px; white-space: nowrap; }
     .action-group { display: grid; gap: 10px; margin-top: 21px; }
-    .primary-button, .topup-button {
+    .primary-button {
       display: flex;
       align-items: center;
       justify-content: center;
       width: 100%;
       min-height: 50px;
       padding: 12px 17px;
+      border: 1px solid #17191d;
       border-radius: 13px;
+      color: #fff;
+      background: #17191d;
       font: inherit;
       font-size: 14px;
       font-weight: 650;
@@ -120,21 +131,40 @@
       -webkit-tap-highlight-color: transparent;
       transition: background-color .2s ease, border-color .2s ease;
     }
-    .primary-button { border: 1px solid #17191d; color: #fff; background: #17191d; }
     .primary-button:hover:not(:disabled) { background: #35373c; }
     .primary-button:active:not(:disabled) { background: #000; }
     .primary-button:disabled { cursor: progress; background: #a6a9ae; border-color: #a6a9ae; }
-    .topup-button {
-      gap: 8px;
-      min-height: 46px;
-      border: 1px solid #e5e7eb;
-      background: #f8f9fa;
-      color: var(--ink);
-      text-decoration: none;
+    .primary-button:focus-visible {
+      outline: 3px solid #abbccd;
+      outline-offset: 3px;
     }
-    .topup-button:hover { background: #f1f2f4; border-color: #d7dade; }
-    .topup-button span { color: #858a92; font-size: 16px; font-weight: 400; }
-    .primary-button:focus-visible, .topup-button:focus-visible {
+    .topup-form { margin: 0; }
+    #card-tab-submit-button {
+      display: block;
+      width: 100%;
+      height: 54px;
+      margin: 0;
+      padding: 0 20px;
+      border: 2px solid #000;
+      border-radius: 30px;
+      background: #FCC31E;
+      color: #2F2E31;
+      font-family: Poppins, giffgaff, "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+      font-weight: 700;
+      font-size: 23px;
+      line-height: 50px;
+      text-align: center;
+      box-shadow: 0 4px 0 #000;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #card-tab-submit-button:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #000;
+    }
+    #card-tab-submit-button:focus-visible {
       outline: 3px solid #abbccd;
       outline-offset: 3px;
     }
@@ -239,7 +269,7 @@
       .app { padding-top: 42px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .primary-button, .topup-button { transition: none; }
+      .primary-button { transition: none; }
       .status.loading .status-indicator { animation: none; }
     }
 
@@ -277,7 +307,9 @@
         </div>
         <div class="action-group">
           <button class="primary-button" id="btn" type="button">开始下载</button>
-          <a id="button_topup" class="topup-button" href="https://www.giffgaff.com/top-up" target="_blank" rel="noopener noreferrer" aria-label="Add credit，前往 giffgaff 官方充值页面">Add credit <span aria-hidden="true">↗</span></a>
+          <form class="topup-form" action="https://www.giffgaff.com/top-up" method="get" target="_blank" rel="noopener noreferrer">
+            <input type="submit" name="continueToPaymentMfe" id="card-tab-submit-button" value="Continue" class="btn btn-primary submitButton" data-di-id="#card-tab-submit-button">
+          </form>
         </div>
         <p class="notice">实际计费与保号状态请以 giffgaff 官方记录为准</p>
         <div class="status" id="status" role="status" aria-live="polite" aria-atomic="true" hidden>
@@ -409,6 +441,13 @@
     }
 
     button.addEventListener("click", consumeData);
+
+    const topupForm = document.querySelector(".topup-form");
+    topupForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      window.open(topupForm.action, "_blank", "noopener,noreferrer");
+    });
+
     loadHistory();
   </script>
 </body>
